@@ -1,0 +1,57 @@
+<WaNoTemplate>
+  <WaNoMeta>
+    <Author>
+      <Name>Lukas Koschmieder</Name>
+      <Email>l.koschmieder@access-technology.de</Email>
+    </Author>
+    <Description>
+      This WaNo implements a simple MICRESS simulation of early stage growth from liquid state.
+    </Description>
+  </WaNoMeta>
+
+  <WaNoRoot name="MICRESS">
+    <WaNoDictBox name="Initial Microstructure">
+      <WaNoFloat name="Critical Radius">0.1</WaNoFloat>
+    </WaNoDictBox>
+    <WaNoDictBox name="Phase Interactions">
+      <WaNoFloat name="Entropy of Fusion">1.0</WaNoFloat>
+      <WaNoFloat name="Equilibrium Temperature">1000.0</WaNoFloat>
+      <WaNoFloat name="Interfacial Energy">1e-5</WaNoFloat>
+    </WaNoDictBox>
+    <WaNoDictBox name="Process Conditions">
+      <WaNoFloat name="Initial Temperature">999.0</WaNoFloat>
+    </WaNoDictBox>
+    <WaNoDictBox name="Output">
+      <WaNoFloat name="Output Interval">0.0125</WaNoFloat>
+      <WaNoFloat name="Simulation Time">5.0</WaNoFloat>
+    </WaNoDictBox>
+  </WaNoRoot>
+
+  <WaNoExecCommand>
+    # Initialize and activate Conda environment
+    simstack_server_mamba_source
+    eval "$(conda shell.bash hook)"
+    conda activate simstack-micress
+
+    # Create MICRESS input file
+    python create_input.py
+
+    # Run MICRESS simulation
+    MICRESS_noTQ.exe input.dri
+
+    # Create SimStack output file
+    python create_output.py
+    ln -s output_dict.yml output.yml # Workaround for Issue #13
+  </WaNoExecCommand>
+
+  <WaNoInputFiles>
+    <WaNoInputFile logical_filename="create_input.py">create_input.py</WaNoInputFile>
+    <WaNoInputFile logical_filename="create_output.py">create_output.py</WaNoInputFile>
+    <WaNoInputFile logical_filename="input.dri.j2">input.dri.j2</WaNoInputFile>
+    <WaNoInputFile logical_filename="report_template.body">report_template.body</WaNoInputFile>
+  </WaNoInputFiles>
+
+  <WaNoOutputFiles>
+    <WaNoOutputFile>output.yml</WaNoOutputFile>
+  </WaNoOutputFiles>
+</WaNoTemplate>

@@ -1,0 +1,38 @@
+<div>
+    <h1>MICRESS&mdash;Early Stage Growth</h1>
+
+    <h2>Input</h2>
+    {% macro render_dict(d, level=0) %}
+    {% for key, value in d.items() %}
+    <div style="margin-left: {{ level * 20 }}px;">
+        <span><strong>{{ key }}:</strong></span>
+        {% if value is mapping %}
+        {{ render_dict(value, level + 1) }}
+        {% else %}
+        <span>{{ value }}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% endmacro %}
+    {{ render_dict(output_dict["input"]) }}
+
+    <h2>Output</h2>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr>
+                {% for column in output_dict["output"]["columns"] %}
+                <th style="padding: 8px; text-align: left;">{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in output_dict["output"]["data"] %}
+            <tr>
+                {% for cell in row %}
+                <td style="padding: 8px; text-align: left;">{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
